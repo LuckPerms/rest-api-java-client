@@ -27,6 +27,7 @@ package net.luckperms.rest;
 
 import net.luckperms.rest.service.ActionService;
 import net.luckperms.rest.service.GroupService;
+import net.luckperms.rest.service.MiscService;
 import net.luckperms.rest.service.UserService;
 
 /**
@@ -65,6 +66,13 @@ public interface LuckPermsClient {
      * @return the action service
      */
     ActionService actions();
+
+    /**
+     * Gets the misc service.
+     *
+     * @return the misc service.
+     */
+    MiscService misc();
 
     /**
      * A builder for {@link LuckPermsClient}

@@ -27,6 +27,7 @@ package net.luckperms.rest;
 
 import net.luckperms.rest.service.ActionService;
 import net.luckperms.rest.service.GroupService;
+import net.luckperms.rest.service.MiscService;
 import net.luckperms.rest.service.UserService;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -42,6 +43,7 @@ class LuckPermsClientImpl implements LuckPermsClient {
     private final UserService userService;
     private final GroupService groupService;
     private final ActionService actionService;
+    private final MiscService miscService;
 
     LuckPermsClientImpl(String baseUrl, String apiKey) {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
@@ -59,6 +61,7 @@ class LuckPermsClientImpl implements LuckPermsClient {
         this.userService = retrofit.create(UserService.class);
         this.groupService = retrofit.create(GroupService.class);
         this.actionService = retrofit.create(ActionService.class);
+        this.miscService = retrofit.create(MiscService.class);
     }
 
     @Override
@@ -74,6 +77,11 @@ class LuckPermsClientImpl implements LuckPermsClient {
     @Override
     public ActionService actions() {
         return this.actionService;
+    }
+
+    @Override
+    public MiscService misc() {
+        return this.miscService;
     }
 
     static final class BuilderImpl implements Builder {
