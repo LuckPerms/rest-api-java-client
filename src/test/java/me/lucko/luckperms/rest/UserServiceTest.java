@@ -32,6 +32,7 @@ import net.luckperms.rest.model.Metadata;
 import net.luckperms.rest.model.Node;
 import net.luckperms.rest.model.PermissionCheckRequest;
 import net.luckperms.rest.model.PermissionCheckResult;
+import net.luckperms.rest.model.PlayerSaveResult;
 import net.luckperms.rest.model.QueryOptions;
 import net.luckperms.rest.model.TemporaryNodeMergeStrategy;
 import net.luckperms.rest.model.UpdateUserRequest;
@@ -65,20 +66,16 @@ public class UserServiceTest extends AbstractIntegrationTest {
         String username = randomUsername();
 
         // create
-        Response<User> createResp = client.users().create(new CreateUserRequest(uuid, username)).execute();
+        Response<PlayerSaveResult> createResp = client.users().create(new CreateUserRequest(uuid, username)).execute();
         assertTrue(createResp.isSuccessful());
-        User user = createResp.body();
-        assertNotNull(user);
-        assertEquals(uuid, user.uniqueId());
-        assertEquals(username, user.username());
-
-        // create - already exists
-        assertEquals(409, client.users().create(new CreateUserRequest(uuid, username)).execute().code());
+        assertEquals(201, createResp.code());
+        PlayerSaveResult result = createResp.body();
+        assertNotNull(result);
 
         // read
         Response<User> readResp = client.users().get(uuid).execute();
         assertTrue(readResp.isSuccessful());
-        user = readResp.body();
+        User user = readResp.body();
         assertNotNull(user);
         assertEquals(uuid, user.uniqueId());
         assertEquals(username, user.username());
@@ -90,6 +87,56 @@ public class UserServiceTest extends AbstractIntegrationTest {
         // delete
         Response<Void> deleteResp = client.users().delete(uuid).execute();
         assertTrue(deleteResp.isSuccessful());
+    }
+
+    @Test
+    public void testUserCreate() throws IOException {
+        LuckPermsClient client = createClient();
+
+        UUID uuid = UUID.randomUUID();
+        String username = randomUsername();
+
+        // create - clean insert
+        Response<PlayerSaveResult> createResp1 = client.users().create(new CreateUserRequest(uuid, username)).execute();
+        assertTrue(createResp1.isSuccessful());
+        assertEquals(201, createResp1.code());
+        PlayerSaveResult result1 = createResp1.body();
+        assertNotNull(result1);
+        assertEquals(ImmutableSet.of(PlayerSaveResult.Outcome.CLEAN_INSERT), result1.outcomes());
+        assertNull(result1.previousUsername());
+        assertNull(result1.otherUniqueIds());
+
+        // create - no change
+        Response<PlayerSaveResult> createResp2 = client.users().create(new CreateUserRequest(uuid, username)).execute();
+        assertTrue(createResp2.isSuccessful());
+        assertEquals(200, createResp2.code());
+        PlayerSaveResult result2 = createResp2.body();
+        assertNotNull(result2);
+        assertEquals(ImmutableSet.of(PlayerSaveResult.Outcome.NO_CHANGE), result2.outcomes());
+        assertNull(result2.previousUsername());
+        assertNull(result2.otherUniqueIds());
+
+        // create - changed username
+        String otherUsername = randomUsername();
+        Response<PlayerSaveResult> createResp3 = client.users().create(new CreateUserRequest(uuid, otherUsername)).execute();
+        assertTrue(createResp3.isSuccessful());
+        assertEquals(200, createResp3.code());
+        PlayerSaveResult result3 = createResp3.body();
+        assertNotNull(result3);
+        assertEquals(ImmutableSet.of(PlayerSaveResult.Outcome.USERNAME_UPDATED), result3.outcomes());
+        assertEquals(username, result3.previousUsername());
+        assertNull(result3.otherUniqueIds());
+
+        // create - changed uuid
+        UUID otherUuid = UUID.randomUUID();
+        Response<PlayerSaveResult> createResp4 = client.users().create(new CreateUserRequest(otherUuid, otherUsername)).execute();
+        assertTrue(createResp4.isSuccessful());
+        assertEquals(201, createResp4.code());
+        PlayerSaveResult result4 = createResp4.body();
+        assertNotNull(result4);
+        assertEquals(ImmutableSet.of(PlayerSaveResult.Outcome.CLEAN_INSERT, PlayerSaveResult.Outcome.OTHER_UNIQUE_IDS_PRESENT_FOR_USERNAME), result4.outcomes());
+        assertNull(result4.previousUsername());
+        assertEquals(ImmutableSet.of(uuid), result4.otherUniqueIds());
     }
 
     @Test

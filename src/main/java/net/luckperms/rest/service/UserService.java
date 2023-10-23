@@ -31,6 +31,7 @@ import net.luckperms.rest.model.Metadata;
 import net.luckperms.rest.model.Node;
 import net.luckperms.rest.model.PermissionCheckRequest;
 import net.luckperms.rest.model.PermissionCheckResult;
+import net.luckperms.rest.model.PlayerSaveResult;
 import net.luckperms.rest.model.PromotionResult;
 import net.luckperms.rest.model.TemporaryNodeMergeStrategy;
 import net.luckperms.rest.model.TrackRequest;
@@ -59,7 +60,7 @@ public interface UserService {
     Call<Set<UUID>> list();
 
     @POST("/user")
-    Call<User> create(@Body CreateUserRequest req);
+    Call<PlayerSaveResult> create(@Body CreateUserRequest req);
 
     @GET("/user/lookup")
     Call<UserLookupResult> lookup(@Query("username") String username);
