@@ -28,6 +28,7 @@ package net.luckperms.rest;
 import net.luckperms.rest.service.ActionService;
 import net.luckperms.rest.service.GroupService;
 import net.luckperms.rest.service.MiscService;
+import net.luckperms.rest.service.TrackService;
 import net.luckperms.rest.service.UserService;
 
 /**
@@ -59,6 +60,13 @@ public interface LuckPermsClient {
      * @return the group service
      */
     GroupService groups();
+
+    /**
+     * Gets the track service.
+     *
+     * @return the track service
+     */
+    TrackService tracks();
 
     /**
      * Gets the action service.

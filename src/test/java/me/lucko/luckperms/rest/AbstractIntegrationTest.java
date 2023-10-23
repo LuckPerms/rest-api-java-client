@@ -61,8 +61,8 @@ public class AbstractIntegrationTest {
         return LuckPermsClient.builder().baseUrl(baseUrl).build();
     }
 
-    protected static String randomUsername() {
-        return "random" + ThreadLocalRandom.current().nextInt(99999);
+    protected static String randomName() {
+        return "random" + ThreadLocalRandom.current().nextInt(9999999);
     }
 
 }

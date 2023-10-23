@@ -59,7 +59,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
     public void testGroupCrud() throws IOException {
         LuckPermsClient client = createClient();
 
-        String name = randomUsername();
+        String name = randomName();
 
         // create
         Response<Group> createResp = client.groups().create(new CreateGroupRequest(name)).execute();
@@ -93,7 +93,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
     public void testGroupList() throws IOException {
         LuckPermsClient client = createClient();
 
-        String name = randomUsername();
+        String name = randomName();
 
         // create a group
         assertTrue(client.groups().create(new CreateGroupRequest(name)).execute().isSuccessful());
@@ -108,7 +108,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
     public void testGroupNodes() throws IOException {
         LuckPermsClient client = createClient();
 
-        String name = randomUsername();
+        String name = randomName();
 
         // create a group
         assertTrue(client.groups().create(new CreateGroupRequest(name)).execute().isSuccessful());
@@ -213,7 +213,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
     public void testGroupMetadata() throws IOException {
         LuckPermsClient client = createClient();
 
-        String name = randomUsername();
+        String name = randomName();
 
         // create a group
         assertTrue(client.groups().create(new CreateGroupRequest(name)).execute().isSuccessful());
@@ -251,7 +251,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
             }
         }
 
-        String name = randomUsername();
+        String name = randomName();
 
         // create a group
         assertTrue(client.groups().create(new CreateGroupRequest(name)).execute().isSuccessful());
@@ -310,7 +310,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
     public void testGroupPermissionCheck() throws IOException {
         LuckPermsClient client = createClient();
 
-        String name = randomUsername();
+        String name = randomName();
 
         // create a group
         assertTrue(client.groups().create(new CreateGroupRequest(name)).execute().isSuccessful());

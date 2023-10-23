@@ -23,30 +23,36 @@
  *  SOFTWARE.
  */
 
-package me.lucko.luckperms.rest;
+package net.luckperms.rest.service;
 
-import net.luckperms.rest.LuckPermsClient;
-import net.luckperms.rest.model.Health;
-import org.junit.jupiter.api.Test;
-import retrofit2.Response;
+import net.luckperms.rest.model.CreateTrackRequest;
+import net.luckperms.rest.model.Track;
+import net.luckperms.rest.model.UpdateTrackRequest;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
+import retrofit2.http.GET;
+import retrofit2.http.PATCH;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
 
-import java.io.IOException;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+public interface TrackService {
 
-public class MiscServiceTest extends AbstractIntegrationTest {
+    @GET("/track")
+    Call<Set<String>> list();
 
-    @Test
-    public void testHealth() throws IOException {
-        LuckPermsClient client = createClient();
+    @POST("/track")
+    Call<Track> create(@Body CreateTrackRequest req);
 
-        Response<Health> resp = client.misc().health().execute();
-        assertTrue(resp.isSuccessful());
+    @GET("/track/{name}")
+    Call<Track> get(@Path("name") String name);
 
-        Health health = resp.body();
-        assertNotNull(health);
-        assertTrue(health.healthy());
-    }
+    @PATCH("/track/{name}")
+    Call<Void> update(@Path("name") String name, @Body UpdateTrackRequest req);
+
+    @DELETE("/track/{name}")
+    Call<Void> delete(@Path("name") String name);
 
 }

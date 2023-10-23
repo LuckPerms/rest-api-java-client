@@ -27,14 +27,22 @@ package me.lucko.luckperms.rest;
 
 import net.luckperms.rest.LuckPermsClient;
 import net.luckperms.rest.model.Context;
+import net.luckperms.rest.model.CreateGroupRequest;
+import net.luckperms.rest.model.CreateTrackRequest;
 import net.luckperms.rest.model.CreateUserRequest;
+import net.luckperms.rest.model.DemotionResult;
+import net.luckperms.rest.model.Group;
 import net.luckperms.rest.model.Metadata;
 import net.luckperms.rest.model.Node;
 import net.luckperms.rest.model.PermissionCheckRequest;
 import net.luckperms.rest.model.PermissionCheckResult;
 import net.luckperms.rest.model.PlayerSaveResult;
+import net.luckperms.rest.model.PromotionResult;
 import net.luckperms.rest.model.QueryOptions;
 import net.luckperms.rest.model.TemporaryNodeMergeStrategy;
+import net.luckperms.rest.model.Track;
+import net.luckperms.rest.model.TrackRequest;
+import net.luckperms.rest.model.UpdateTrackRequest;
 import net.luckperms.rest.model.UpdateUserRequest;
 import net.luckperms.rest.model.User;
 import net.luckperms.rest.model.UserLookupResult;
@@ -48,6 +56,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -63,7 +72,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
         LuckPermsClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
-        String username = randomUsername();
+        String username = randomName();
 
         // create
         Response<PlayerSaveResult> createResp = client.users().create(new CreateUserRequest(uuid, username)).execute();
@@ -81,7 +90,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
         assertEquals(username, user.username());
 
         // update
-        Response<Void> updateResp = client.users().update(uuid, new UpdateUserRequest(randomUsername())).execute();
+        Response<Void> updateResp = client.users().update(uuid, new UpdateUserRequest(randomName())).execute();
         assertTrue(updateResp.isSuccessful());
 
         // delete
@@ -94,7 +103,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
         LuckPermsClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
-        String username = randomUsername();
+        String username = randomName();
 
         // create - clean insert
         Response<PlayerSaveResult> createResp1 = client.users().create(new CreateUserRequest(uuid, username)).execute();
@@ -117,7 +126,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
         assertNull(result2.otherUniqueIds());
 
         // create - changed username
-        String otherUsername = randomUsername();
+        String otherUsername = randomName();
         Response<PlayerSaveResult> createResp3 = client.users().create(new CreateUserRequest(uuid, otherUsername)).execute();
         assertTrue(createResp3.isSuccessful());
         assertEquals(200, createResp3.code());
@@ -144,7 +153,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
         LuckPermsClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
-        String username = randomUsername();
+        String username = randomName();
 
         // create a user & give it a permission
         assertTrue(client.users().create(new CreateUserRequest(uuid, username)).execute().isSuccessful());
@@ -161,7 +170,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
         LuckPermsClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
-        String username = randomUsername();
+        String username = randomName();
 
         // create a user
         assertTrue(client.users().create(new CreateUserRequest(uuid, username)).execute().isSuccessful());
@@ -180,7 +189,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
 
         // not found
         assertEquals(404, client.users().lookup(UUID.randomUUID()).execute().code());
-        assertEquals(404, client.users().lookup(randomUsername()).execute().code());
+        assertEquals(404, client.users().lookup(randomName()).execute().code());
     }
 
     @Test
@@ -188,7 +197,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
         LuckPermsClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
-        String username = randomUsername();
+        String username = randomName();
 
         // create a user
         assertTrue(client.users().create(new CreateUserRequest(uuid, username)).execute().isSuccessful());
@@ -304,7 +313,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
         LuckPermsClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
-        String username = randomUsername();
+        String username = randomName();
 
         // create a user
         assertTrue(client.users().create(new CreateUserRequest(uuid, username)).execute().isSuccessful());
@@ -344,7 +353,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
         }
 
         UUID uuid = UUID.randomUUID();
-        String username = randomUsername();
+        String username = randomName();
 
         // create a user
         assertTrue(client.users().create(new CreateUserRequest(uuid, username)).execute().isSuccessful());
@@ -404,7 +413,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
         LuckPermsClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
-        String username = randomUsername();
+        String username = randomName();
 
         // create a user
         assertTrue(client.users().create(new CreateUserRequest(uuid, username)).execute().isSuccessful());
@@ -450,4 +459,66 @@ public class UserServiceTest extends AbstractIntegrationTest {
         assertEquals(new Node("test.node.three", true, Collections.singleton(new Context("server", "test")), null), resp4.body().node());
     }
 
+    @Test
+    public void testUserPromoteDemote() throws IOException {
+        LuckPermsClient client = createClient();
+
+        // create a user
+        UUID uuid = UUID.randomUUID();
+        String username = randomName();
+        assertTrue(client.users().create(new CreateUserRequest(uuid, username)).execute().isSuccessful());
+
+        // create a track
+        String trackName = randomName();
+        assertTrue(client.tracks().create(new CreateTrackRequest(trackName)).execute().isSuccessful());
+
+        // create some groups
+        Group group1 = Objects.requireNonNull(client.groups().create(new CreateGroupRequest(randomName())).execute().body());
+        Group group2 = Objects.requireNonNull(client.groups().create(new CreateGroupRequest(randomName())).execute().body());
+        Group group3 = Objects.requireNonNull(client.groups().create(new CreateGroupRequest(randomName())).execute().body());
+        ImmutableList<String> groupNames = ImmutableList.of(group1.name(), group2.name(), group3.name());
+
+        // update the track
+        assertTrue(client.tracks().update(trackName, new UpdateTrackRequest(groupNames)).execute().isSuccessful());
+
+        // promote the user along the track
+        Response<PromotionResult> promoteResp = client.users().promote(uuid, new TrackRequest(trackName, ImmutableSet.of())).execute();
+        assertTrue(promoteResp.isSuccessful());
+        PromotionResult promoteResult = promoteResp.body();
+        assertNotNull(promoteResult);
+        assertTrue(promoteResult.success());
+        assertEquals(PromotionResult.Status.ADDED_TO_FIRST_GROUP, promoteResult.status());
+        assertNull(promoteResult.groupFrom());
+        assertEquals(group1.name(), promoteResult.groupTo());
+
+        // promote the user along the track (again)
+        promoteResp = client.users().promote(uuid, new TrackRequest(trackName, ImmutableSet.of())).execute();
+        assertTrue(promoteResp.isSuccessful());
+        promoteResult = promoteResp.body();
+        assertNotNull(promoteResult);
+        assertTrue(promoteResult.success());
+        assertEquals(PromotionResult.Status.SUCCESS, promoteResult.status());
+        assertEquals(group1.name(), promoteResult.groupFrom());
+        assertEquals(group2.name(), promoteResult.groupTo());
+
+        // demote the user along the track
+        Response<DemotionResult> demoteResp = client.users().demote(uuid, new TrackRequest(trackName, ImmutableSet.of())).execute();
+        assertTrue(demoteResp.isSuccessful());
+        DemotionResult demoteResult = demoteResp.body();
+        assertNotNull(demoteResult);
+        assertTrue(demoteResult.success());
+        assertEquals(DemotionResult.Status.SUCCESS, demoteResult.status());
+        assertEquals(group2.name(), demoteResult.groupFrom());
+        assertEquals(group1.name(), demoteResult.groupTo());
+
+        // demote the user along the track (again)
+        demoteResp = client.users().demote(uuid, new TrackRequest(trackName, ImmutableSet.of())).execute();
+        assertTrue(demoteResp.isSuccessful());
+        demoteResult = demoteResp.body();
+        assertNotNull(demoteResult);
+        assertTrue(demoteResult.success());
+        assertEquals(DemotionResult.Status.REMOVED_FROM_FIRST_GROUP, demoteResult.status());
+        assertEquals(group1.name(), demoteResult.groupFrom());
+        assertNull(demoteResult.groupTo());
+    }
 }

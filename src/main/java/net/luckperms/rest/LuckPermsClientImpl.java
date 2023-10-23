@@ -28,6 +28,7 @@ package net.luckperms.rest;
 import net.luckperms.rest.service.ActionService;
 import net.luckperms.rest.service.GroupService;
 import net.luckperms.rest.service.MiscService;
+import net.luckperms.rest.service.TrackService;
 import net.luckperms.rest.service.UserService;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -42,6 +43,7 @@ import java.util.Objects;
 class LuckPermsClientImpl implements LuckPermsClient {
     private final UserService userService;
     private final GroupService groupService;
+    private final TrackService trackService;
     private final ActionService actionService;
     private final MiscService miscService;
 
@@ -60,6 +62,7 @@ class LuckPermsClientImpl implements LuckPermsClient {
 
         this.userService = retrofit.create(UserService.class);
         this.groupService = retrofit.create(GroupService.class);
+        this.trackService = retrofit.create(TrackService.class);
         this.actionService = retrofit.create(ActionService.class);
         this.miscService = retrofit.create(MiscService.class);
     }
@@ -72,6 +75,10 @@ class LuckPermsClientImpl implements LuckPermsClient {
     @Override
     public GroupService groups() {
         return this.groupService;
+    }
+
+    public TrackService tracks() {
+        return this.trackService;
     }
 
     @Override

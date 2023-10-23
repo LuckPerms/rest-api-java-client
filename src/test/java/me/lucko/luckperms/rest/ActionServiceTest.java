@@ -43,8 +43,8 @@ public class ActionServiceTest extends AbstractIntegrationTest {
 
         Response<Void> resp = client.actions().submit(new Action(
                 System.currentTimeMillis() / 1000L,
-                new Action.Source(UUID.randomUUID(), randomUsername()),
-                new Action.Target(UUID.randomUUID(), randomUsername(), Action.Target.Type.USER),
+                new Action.Source(UUID.randomUUID(), randomName()),
+                new Action.Target(UUID.randomUUID(), randomName(), Action.Target.Type.USER),
                 "hello world"
         )).execute();
         assertTrue(resp.isSuccessful());

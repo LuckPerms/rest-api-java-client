@@ -23,30 +23,16 @@
  *  SOFTWARE.
  */
 
-package me.lucko.luckperms.rest;
+package net.luckperms.rest.model;
 
-import net.luckperms.rest.LuckPermsClient;
-import net.luckperms.rest.model.Health;
-import org.junit.jupiter.api.Test;
-import retrofit2.Response;
+public class CreateTrackRequest extends AbstractModel {
+    private final String name;
 
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-public class MiscServiceTest extends AbstractIntegrationTest {
-
-    @Test
-    public void testHealth() throws IOException {
-        LuckPermsClient client = createClient();
-
-        Response<Health> resp = client.misc().health().execute();
-        assertTrue(resp.isSuccessful());
-
-        Health health = resp.body();
-        assertNotNull(health);
-        assertTrue(health.healthy());
+    public CreateTrackRequest(String name) {
+        this.name = name;
     }
 
+    public String name() {
+        return this.name;
+    }
 }
