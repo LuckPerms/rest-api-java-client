@@ -25,7 +25,7 @@
 
 package me.lucko.luckperms.rest;
 
-import net.luckperms.rest.LuckPermsClient;
+import net.luckperms.rest.LuckPermsRestClient;
 import net.luckperms.rest.model.Health;
 import org.junit.jupiter.api.Test;
 import retrofit2.Response;
@@ -39,7 +39,7 @@ public class MiscServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testHealth() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         Response<Health> resp = client.misc().health().execute();
         assertTrue(resp.isSuccessful());

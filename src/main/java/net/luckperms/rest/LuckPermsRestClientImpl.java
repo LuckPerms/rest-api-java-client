@@ -40,22 +40,26 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.IOException;
 import java.util.Objects;
 
-class LuckPermsClientImpl implements LuckPermsClient {
+class LuckPermsRestClientImpl implements LuckPermsRestClient {
+    private final OkHttpClient httpClient;
+
     private final UserService userService;
     private final GroupService groupService;
     private final TrackService trackService;
     private final ActionService actionService;
     private final MiscService miscService;
 
-    LuckPermsClientImpl(String baseUrl, String apiKey) {
+    LuckPermsRestClientImpl(String baseUrl, String apiKey) {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
         if (apiKey != null && !apiKey.isEmpty()) {
             clientBuilder.addInterceptor(new AuthInterceptor(apiKey));
         }
 
+        this.httpClient = clientBuilder.build();
+
         Retrofit retrofit = new Retrofit.Builder()
-                .client(clientBuilder.build())
+                .client(this.httpClient)
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -91,6 +95,12 @@ class LuckPermsClientImpl implements LuckPermsClient {
         return this.miscService;
     }
 
+    @Override
+    public void close() {
+        this.httpClient.dispatcher().executorService().shutdown();
+        this.httpClient.connectionPool().evictAll();
+    }
+
     static final class BuilderImpl implements Builder {
         private String baseUrl = null;
         private String apiKey = null;
@@ -112,9 +122,9 @@ class LuckPermsClientImpl implements LuckPermsClient {
         }
 
         @Override
-        public LuckPermsClient build() {
+        public LuckPermsRestClient build() {
             Objects.requireNonNull(this.baseUrl, "baseUrl must be configured!");
-            return new LuckPermsClientImpl(this.baseUrl, this.apiKey);
+            return new LuckPermsRestClientImpl(this.baseUrl, this.apiKey);
         }
     }
 

@@ -30,6 +30,7 @@ import net.luckperms.rest.model.Group;
 import net.luckperms.rest.model.GroupSearchResult;
 import net.luckperms.rest.model.Metadata;
 import net.luckperms.rest.model.Node;
+import net.luckperms.rest.model.NodeType;
 import net.luckperms.rest.model.PermissionCheckRequest;
 import net.luckperms.rest.model.PermissionCheckResult;
 import net.luckperms.rest.model.TemporaryNodeMergeStrategy;
@@ -65,7 +66,7 @@ public interface GroupService {
     Call<List<GroupSearchResult>> searchNodesByMetaKey(@Query("metaKey") String metaKey);
 
     @GET("/group/search")
-    Call<List<GroupSearchResult>> searchNodesByType(@Query("type") String type);
+    Call<List<GroupSearchResult>> searchNodesByType(@Query("type") NodeType type);
 
     @GET("/group/{name}")
     Call<Group> get(@Path("name") String name);

@@ -25,13 +25,14 @@
 
 package me.lucko.luckperms.rest;
 
-import net.luckperms.rest.LuckPermsClient;
+import net.luckperms.rest.LuckPermsRestClient;
 import net.luckperms.rest.model.Context;
 import net.luckperms.rest.model.CreateGroupRequest;
 import net.luckperms.rest.model.Group;
 import net.luckperms.rest.model.GroupSearchResult;
 import net.luckperms.rest.model.Metadata;
 import net.luckperms.rest.model.Node;
+import net.luckperms.rest.model.NodeType;
 import net.luckperms.rest.model.PermissionCheckRequest;
 import net.luckperms.rest.model.PermissionCheckResult;
 import net.luckperms.rest.model.QueryOptions;
@@ -57,7 +58,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testGroupCrud() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         String name = randomName();
 
@@ -91,7 +92,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testGroupList() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         String name = randomName();
 
@@ -106,7 +107,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testGroupNodes() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         String name = randomName();
 
@@ -211,7 +212,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testGroupMetadata() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         String name = randomName();
 
@@ -242,7 +243,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testGroupSearch() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         // clear existing groups
         for (String g : Objects.requireNonNull(client.groups().list().execute().body())) {
@@ -298,7 +299,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
         ), resp3.body());
 
         // searchNodesByType
-        Response<List<GroupSearchResult>> resp4 = client.groups().searchNodesByType("prefix").execute();
+        Response<List<GroupSearchResult>> resp4 = client.groups().searchNodesByType(NodeType.PREFIX).execute();
         assertTrue(resp4.isSuccessful());
         assertNotNull(resp4.body());
         assertEquals(ImmutableList.of(
@@ -308,7 +309,7 @@ public class GroupServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testGroupPermissionCheck() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         String name = randomName();
 

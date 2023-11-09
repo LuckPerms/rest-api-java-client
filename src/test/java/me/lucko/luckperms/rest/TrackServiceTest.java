@@ -25,7 +25,7 @@
 
 package me.lucko.luckperms.rest;
 
-import net.luckperms.rest.LuckPermsClient;
+import net.luckperms.rest.LuckPermsRestClient;
 import net.luckperms.rest.model.CreateGroupRequest;
 import net.luckperms.rest.model.CreateTrackRequest;
 import net.luckperms.rest.model.Group;
@@ -47,7 +47,7 @@ public class TrackServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testTrackCrud() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         String name = randomName();
 
@@ -98,7 +98,7 @@ public class TrackServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testTrackList() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         String name = randomName();
 

@@ -25,7 +25,7 @@
 
 package me.lucko.luckperms.rest;
 
-import net.luckperms.rest.LuckPermsClient;
+import net.luckperms.rest.LuckPermsRestClient;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -59,19 +59,19 @@ public class ClientAuthenticationTest {
                     .withStrategy(Wait.forLogMessage(".*Successfully enabled.*", 1))
             );
 
-    private LuckPermsClient createClient(String apiKey) {
+    private LuckPermsRestClient createClient(String apiKey) {
         assertTrue(container.isRunning());
 
         String host = container.getHost();
         Integer port = container.getFirstMappedPort();
         String baseUrl = "http://" + host + ":" + port + "/";
 
-        return LuckPermsClient.builder().baseUrl(baseUrl).apiKey(apiKey).build();
+        return LuckPermsRestClient.builder().baseUrl(baseUrl).apiKey(apiKey).build();
     }
 
     @Test
     public void testUnauthorized() throws IOException {
-        LuckPermsClient client = createClient(null);
+        LuckPermsRestClient client = createClient(null);
 
         Response<Set<UUID>> resp = client.users().list().execute();
         assertFalse(resp.isSuccessful());
@@ -81,7 +81,7 @@ public class ClientAuthenticationTest {
 
     @Test
     public void testAuthorized() throws IOException {
-        LuckPermsClient client = createClient("test1");
+        LuckPermsRestClient client = createClient("test1");
 
         Response<Set<UUID>> resp = client.users().list().execute();
         assertTrue(resp.isSuccessful());

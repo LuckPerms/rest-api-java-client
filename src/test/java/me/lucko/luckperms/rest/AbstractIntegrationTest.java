@@ -25,7 +25,7 @@
 
 package me.lucko.luckperms.rest;
 
-import net.luckperms.rest.LuckPermsClient;
+import net.luckperms.rest.LuckPermsRestClient;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -51,14 +51,14 @@ public class AbstractIntegrationTest {
                     .withStrategy(Wait.forLogMessage(".*Successfully enabled.*", 1))
             );
 
-    protected LuckPermsClient createClient() {
+    protected LuckPermsRestClient createClient() {
         assertTrue(container.isRunning());
 
         String host = container.getHost();
         Integer port = container.getFirstMappedPort();
         String baseUrl = "http://" + host + ":" + port + "/";
 
-        return LuckPermsClient.builder().baseUrl(baseUrl).build();
+        return LuckPermsRestClient.builder().baseUrl(baseUrl).build();
     }
 
     protected static String randomName() {

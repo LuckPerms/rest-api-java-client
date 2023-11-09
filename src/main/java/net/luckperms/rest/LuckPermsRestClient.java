@@ -36,7 +36,7 @@ import net.luckperms.rest.service.UserService;
  *
  * @see <a href="https://github.com/LuckPerms/rest-api">rest-api GitHub repo</a>
  */
-public interface LuckPermsClient {
+public interface LuckPermsRestClient extends AutoCloseable {
 
     /**
      * Creates a new client builder.
@@ -44,7 +44,7 @@ public interface LuckPermsClient {
      * @return the new builder
      */
     static Builder builder() {
-        return new LuckPermsClientImpl.BuilderImpl();
+        return new LuckPermsRestClientImpl.BuilderImpl();
     }
 
     /**
@@ -83,7 +83,13 @@ public interface LuckPermsClient {
     MiscService misc();
 
     /**
-     * A builder for {@link LuckPermsClient}
+     * Close the underlying resources used by the client.
+     */
+    @Override
+    void close();
+
+    /**
+     * A builder for {@link LuckPermsRestClient}
      */
     interface Builder {
 
@@ -108,6 +114,6 @@ public interface LuckPermsClient {
          *
          * @return a client
          */
-        LuckPermsClient build();
+        LuckPermsRestClient build();
     }
 }

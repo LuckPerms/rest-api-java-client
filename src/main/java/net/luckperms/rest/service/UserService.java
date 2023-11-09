@@ -29,6 +29,7 @@ import net.luckperms.rest.model.CreateUserRequest;
 import net.luckperms.rest.model.DemotionResult;
 import net.luckperms.rest.model.Metadata;
 import net.luckperms.rest.model.Node;
+import net.luckperms.rest.model.NodeType;
 import net.luckperms.rest.model.PermissionCheckRequest;
 import net.luckperms.rest.model.PermissionCheckResult;
 import net.luckperms.rest.model.PlayerSaveResult;
@@ -78,7 +79,7 @@ public interface UserService {
     Call<List<UserSearchResult>> searchNodesByMetaKey(@Query("metaKey") String metaKey);
 
     @GET("/user/search")
-    Call<List<UserSearchResult>> searchNodesByType(@Query("type") String type);
+    Call<List<UserSearchResult>> searchNodesByType(@Query("type") NodeType type);
 
     @GET("/user/{uniqueId}")
     Call<User> get(@Path("uniqueId") UUID uniqueId);

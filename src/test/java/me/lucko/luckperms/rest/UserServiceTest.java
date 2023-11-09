@@ -25,7 +25,7 @@
 
 package me.lucko.luckperms.rest;
 
-import net.luckperms.rest.LuckPermsClient;
+import net.luckperms.rest.LuckPermsRestClient;
 import net.luckperms.rest.model.Context;
 import net.luckperms.rest.model.CreateGroupRequest;
 import net.luckperms.rest.model.CreateTrackRequest;
@@ -34,13 +34,13 @@ import net.luckperms.rest.model.DemotionResult;
 import net.luckperms.rest.model.Group;
 import net.luckperms.rest.model.Metadata;
 import net.luckperms.rest.model.Node;
+import net.luckperms.rest.model.NodeType;
 import net.luckperms.rest.model.PermissionCheckRequest;
 import net.luckperms.rest.model.PermissionCheckResult;
 import net.luckperms.rest.model.PlayerSaveResult;
 import net.luckperms.rest.model.PromotionResult;
 import net.luckperms.rest.model.QueryOptions;
 import net.luckperms.rest.model.TemporaryNodeMergeStrategy;
-import net.luckperms.rest.model.Track;
 import net.luckperms.rest.model.TrackRequest;
 import net.luckperms.rest.model.UpdateTrackRequest;
 import net.luckperms.rest.model.UpdateUserRequest;
@@ -69,7 +69,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testUserCrud() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
         String username = randomName();
@@ -100,7 +100,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testUserCreate() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
         String username = randomName();
@@ -150,7 +150,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testUserList() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
         String username = randomName();
@@ -167,7 +167,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testUserLookup() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
         String username = randomName();
@@ -194,7 +194,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testUserNodes() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
         String username = randomName();
@@ -310,7 +310,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testUserMetadata() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
         String username = randomName();
@@ -342,7 +342,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testUserSearch() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         // clear existing users
         Set<UUID> existingUsers = client.users().list().execute().body();
@@ -400,7 +400,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
         ), resp3.body());
 
         // searchNodesByType
-        Response<List<UserSearchResult>> resp4 = client.users().searchNodesByType("prefix").execute();
+        Response<List<UserSearchResult>> resp4 = client.users().searchNodesByType(NodeType.PREFIX).execute();
         assertTrue(resp4.isSuccessful());
         assertNotNull(resp4.body());
         assertEquals(ImmutableList.of(
@@ -410,7 +410,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testUserPermissionCheck() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         UUID uuid = UUID.randomUUID();
         String username = randomName();
@@ -461,7 +461,7 @@ public class UserServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testUserPromoteDemote() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         // create a user
         UUID uuid = UUID.randomUUID();

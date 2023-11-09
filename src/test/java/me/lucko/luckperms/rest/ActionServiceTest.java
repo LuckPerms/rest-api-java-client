@@ -25,7 +25,7 @@
 
 package me.lucko.luckperms.rest;
 
-import net.luckperms.rest.LuckPermsClient;
+import net.luckperms.rest.LuckPermsRestClient;
 import net.luckperms.rest.model.Action;
 import org.junit.jupiter.api.Test;
 import retrofit2.Response;
@@ -39,7 +39,7 @@ public class ActionServiceTest extends AbstractIntegrationTest {
 
     @Test
     public void testSubmit() throws IOException {
-        LuckPermsClient client = createClient();
+        LuckPermsRestClient client = createClient();
 
         Response<Void> resp = client.actions().submit(new Action(
                 System.currentTimeMillis() / 1000L,
