@@ -23,49 +23,31 @@
  *  SOFTWARE.
  */
 
-package net.luckperms.rest.model;
+package net.luckperms.rest.service;
 
-import com.google.gson.annotations.SerializedName;
+import net.luckperms.rest.event.EventCall;
+import net.luckperms.rest.model.LogBroadcastEvent;
+import net.luckperms.rest.model.PostNetworkSyncEvent;
+import net.luckperms.rest.model.PostSyncEvent;
+import net.luckperms.rest.model.PreNetworkSyncEvent;
+import net.luckperms.rest.model.PreSyncEvent;
+import retrofit2.http.GET;
 
-import java.util.Set;
-import java.util.UUID;
+public interface EventService {
 
-public class PlayerSaveResult extends AbstractModel {
-    private final Set<Outcome> outcomes;
-    private final String previousUsername; // nullable
-    private final Set<UUID> otherUniqueIds; // nullable
+    @GET("/event/log-broadcast")
+    EventCall<LogBroadcastEvent> logBroadcast();
 
-    public PlayerSaveResult(Set<Outcome> outcomes, String previousUsername, Set<UUID> otherUniqueIds) {
-        this.outcomes = outcomes;
-        this.previousUsername = previousUsername;
-        this.otherUniqueIds = otherUniqueIds;
-    }
+    @GET("/event/post-network-sync")
+    EventCall<PostNetworkSyncEvent> postNetworkSync();
 
-    public Set<Outcome> outcomes() {
-        return this.outcomes;
-    }
+    @GET("/event/post-sync")
+    EventCall<PostSyncEvent> postSync();
 
-    public String previousUsername() {
-        return this.previousUsername;
-    }
+    @GET("/event/pre-network-sync")
+    EventCall<PreNetworkSyncEvent> preNetworkSync();
 
-    public Set<UUID> otherUniqueIds() {
-        return this.otherUniqueIds;
-    }
-
-    public enum Outcome {
-
-        @SerializedName("clean_insert")
-        CLEAN_INSERT,
-
-        @SerializedName("no_change")
-        NO_CHANGE,
-
-        @SerializedName("username_updated")
-        USERNAME_UPDATED,
-
-        @SerializedName("other_unique_ids_present_for_username")
-        OTHER_UNIQUE_IDS_PRESENT_FOR_USERNAME,
-    }
+    @GET("/event/pre-sync")
+    EventCall<PreSyncEvent> preSync();
 
 }

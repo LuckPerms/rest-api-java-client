@@ -3,6 +3,9 @@ plugins {
     id 'maven-publish'
 }
 
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 group = 'net.luckperms'
 version = '0.1-SNAPSHOT'
 
@@ -21,6 +24,13 @@ repositories {
 
 test {
     useJUnitPlatform()
+    testLogging {
+        events = [TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED]
+        exceptionFormat = TestExceptionFormat.FULL
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
 }
 
 dependencies {
@@ -29,6 +39,9 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.14.9'
     implementation 'com.squareup.okio:okio:1.17.5'
     implementation 'com.google.code.gson:gson:2.9.1'
+    implementation('com.launchdarkly:okhttp-eventsource:4.1.1') {
+        exclude(module: 'okhttp')
+    }
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.1'

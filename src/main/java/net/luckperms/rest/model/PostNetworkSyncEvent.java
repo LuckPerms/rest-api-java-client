@@ -25,47 +25,35 @@
 
 package net.luckperms.rest.model;
 
-import com.google.gson.annotations.SerializedName;
-
-import java.util.Set;
 import java.util.UUID;
 
-public class PlayerSaveResult extends AbstractModel {
-    private final Set<Outcome> outcomes;
-    private final String previousUsername; // nullable
-    private final Set<UUID> otherUniqueIds; // nullable
+public class PostNetworkSyncEvent extends AbstractModel {
 
-    public PlayerSaveResult(Set<Outcome> outcomes, String previousUsername, Set<UUID> otherUniqueIds) {
-        this.outcomes = outcomes;
-        this.previousUsername = previousUsername;
-        this.otherUniqueIds = otherUniqueIds;
+    private final UUID syncId;
+    private final SyncType type;
+    private final boolean didSyncOccur;
+    private final UUID specificUserUniqueId; // nullable
+
+    public PostNetworkSyncEvent(UUID syncId, SyncType type, boolean didSyncOccur, UUID specificUserUniqueId) {
+        this.syncId = syncId;
+        this.type = type;
+        this.didSyncOccur = didSyncOccur;
+        this.specificUserUniqueId = specificUserUniqueId;
     }
 
-    public Set<Outcome> outcomes() {
-        return this.outcomes;
+    public UUID syncId() {
+        return this.syncId;
     }
 
-    public String previousUsername() {
-        return this.previousUsername;
+    public SyncType type() {
+        return this.type;
     }
 
-    public Set<UUID> otherUniqueIds() {
-        return this.otherUniqueIds;
+    public boolean didSyncOccur() {
+        return this.didSyncOccur;
     }
 
-    public enum Outcome {
-
-        @SerializedName("clean_insert")
-        CLEAN_INSERT,
-
-        @SerializedName("no_change")
-        NO_CHANGE,
-
-        @SerializedName("username_updated")
-        USERNAME_UPDATED,
-
-        @SerializedName("other_unique_ids_present_for_username")
-        OTHER_UNIQUE_IDS_PRESENT_FOR_USERNAME,
+    public UUID specificUserUniqueId() {
+        return this.specificUserUniqueId;
     }
-
 }

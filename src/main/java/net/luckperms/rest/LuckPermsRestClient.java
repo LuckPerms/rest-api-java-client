@@ -26,6 +26,7 @@
 package net.luckperms.rest;
 
 import net.luckperms.rest.service.ActionService;
+import net.luckperms.rest.service.EventService;
 import net.luckperms.rest.service.GroupService;
 import net.luckperms.rest.service.MiscService;
 import net.luckperms.rest.service.TrackService;
@@ -74,6 +75,13 @@ public interface LuckPermsRestClient extends AutoCloseable {
      * @return the action service
      */
     ActionService actions();
+
+    /**
+     * Gets the event service.
+     *
+     * @return the event service
+     */
+    EventService events();
 
     /**
      * Gets the misc service.
