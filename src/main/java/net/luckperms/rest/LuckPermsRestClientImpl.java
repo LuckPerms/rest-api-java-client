@@ -26,6 +26,7 @@
 package net.luckperms.rest;
 
 import net.luckperms.rest.service.ActionService;
+import net.luckperms.rest.service.EventService;
 import net.luckperms.rest.service.GroupService;
 import net.luckperms.rest.service.MiscService;
 import net.luckperms.rest.service.TrackService;
@@ -39,14 +40,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 class LuckPermsRestClientImpl implements LuckPermsRestClient {
     private final OkHttpClient httpClient;
+    private final EventCallAdapterFactory eventCallAdapterFactory;
 
     private final UserService userService;
     private final GroupService groupService;
     private final TrackService trackService;
     private final ActionService actionService;
+    private final EventService eventService;
     private final MiscService miscService;
 
     LuckPermsRestClientImpl(String baseUrl, String apiKey) {
@@ -56,11 +60,15 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
             clientBuilder.addInterceptor(new AuthInterceptor(apiKey));
         }
 
+        clientBuilder.readTimeout(60, TimeUnit.SECONDS);
+
         this.httpClient = clientBuilder.build();
+        this.eventCallAdapterFactory = new EventCallAdapterFactory(this.httpClient);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(this.httpClient)
                 .baseUrl(baseUrl)
+                .addCallAdapterFactory(this.eventCallAdapterFactory)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -68,6 +76,7 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
         this.groupService = retrofit.create(GroupService.class);
         this.trackService = retrofit.create(TrackService.class);
         this.actionService = retrofit.create(ActionService.class);
+        this.eventService = retrofit.create(EventService.class);
         this.miscService = retrofit.create(MiscService.class);
     }
 
@@ -91,6 +100,11 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
     }
 
     @Override
+    public EventService events() {
+        return this.eventService;
+    }
+
+    @Override
     public MiscService misc() {
         return this.miscService;
     }
@@ -99,6 +113,7 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
     public void close() {
         this.httpClient.dispatcher().executorService().shutdown();
         this.httpClient.connectionPool().evictAll();
+        this.eventCallAdapterFactory.close();
     }
 
     static final class BuilderImpl implements Builder {

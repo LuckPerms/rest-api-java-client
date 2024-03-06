@@ -23,49 +23,17 @@
  *  SOFTWARE.
  */
 
-package net.luckperms.rest.model;
+package net.luckperms.rest.event;
 
-import com.google.gson.annotations.SerializedName;
+import java.util.function.Consumer;
 
-import java.util.Set;
-import java.util.UUID;
+public interface EventProducer<E> extends AutoCloseable {
 
-public class PlayerSaveResult extends AbstractModel {
-    private final Set<Outcome> outcomes;
-    private final String previousUsername; // nullable
-    private final Set<UUID> otherUniqueIds; // nullable
+    void subscribe(Consumer<E> consumer);
 
-    public PlayerSaveResult(Set<Outcome> outcomes, String previousUsername, Set<UUID> otherUniqueIds) {
-        this.outcomes = outcomes;
-        this.previousUsername = previousUsername;
-        this.otherUniqueIds = otherUniqueIds;
-    }
+    void errorHandler(Consumer<Exception> errorHandler);
 
-    public Set<Outcome> outcomes() {
-        return this.outcomes;
-    }
-
-    public String previousUsername() {
-        return this.previousUsername;
-    }
-
-    public Set<UUID> otherUniqueIds() {
-        return this.otherUniqueIds;
-    }
-
-    public enum Outcome {
-
-        @SerializedName("clean_insert")
-        CLEAN_INSERT,
-
-        @SerializedName("no_change")
-        NO_CHANGE,
-
-        @SerializedName("username_updated")
-        USERNAME_UPDATED,
-
-        @SerializedName("other_unique_ids_present_for_username")
-        OTHER_UNIQUE_IDS_PRESENT_FOR_USERNAME,
-    }
+    @Override
+    void close();
 
 }
