@@ -90,6 +90,9 @@ public interface UserService {
     @DELETE("/user/{uniqueId}")
     Call<Void> delete(@Path("uniqueId") UUID uniqueId);
 
+    @DELETE("/user/{uniqueId}")
+    Call<Void> delete(@Path("uniqueId") UUID uniqueId, @Query("playerDataOnly") boolean playerDataOnly);
+
     @GET("/user/{uniqueId}/nodes")
     Call<List<Node>> nodes(@Path("uniqueId") UUID uniqueId);
 

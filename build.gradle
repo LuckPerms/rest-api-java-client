@@ -12,8 +12,12 @@ version = '0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
+        languageVersion = JavaLanguageVersion.of(11)
     }
+
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+
     withJavadocJar()
     withSourcesJar()
 }

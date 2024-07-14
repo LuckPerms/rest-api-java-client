@@ -26,11 +26,52 @@
 package net.luckperms.rest.service;
 
 import net.luckperms.rest.model.Action;
+import net.luckperms.rest.model.ActionPage;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
+
+import java.util.UUID;
 
 public interface ActionService {
+
+    @GET("/action")
+    Call<ActionPage> query();
+
+    @GET("/action")
+    Call<ActionPage> query(@Query("pageSize") int pageSize, @Query("pageNumber") int pageNumber);
+
+    @GET("/action")
+    Call<ActionPage> querySource(@Query("source") UUID source);
+
+    @GET("/action")
+    Call<ActionPage> querySource(@Query("source") UUID source, @Query("pageSize") int pageSize, @Query("pageNumber") int pageNumber);
+
+    @GET("/action")
+    Call<ActionPage> queryTargetUser(@Query("user") UUID user);
+
+    @GET("/action")
+    Call<ActionPage> queryTargetUser(@Query("user") UUID user, @Query("pageSize") int pageSize, @Query("pageNumber") int pageNumber);
+
+    @GET("/action")
+    Call<ActionPage> queryTargetGroup(@Query("group") String group);
+
+    @GET("/action")
+    Call<ActionPage> queryTargetGroup(@Query("group") String group, @Query("pageSize") int pageSize, @Query("pageNumber") int pageNumber);
+
+    @GET("/action")
+    Call<ActionPage> queryTargetTrack(@Query("track") String track);
+
+    @GET("/action")
+    Call<ActionPage> queryTargetTrack(@Query("track") String track, @Query("pageSize") int pageSize, @Query("pageNumber") int pageNumber);
+
+    @GET("/action")
+    Call<ActionPage> querySearch(@Query("search") String search);
+
+    @GET("/action")
+    Call<ActionPage> querySearch(@Query("search") String search, @Query("pageSize") int pageSize, @Query("pageNumber") int pageNumber);
 
     @POST("/action")
     Call<Void> submit(@Body Action action);
