@@ -101,10 +101,10 @@ public interface GroupService {
     @GET("/group/{name}/meta")
     Call<Metadata> metadata(@Path("name") String name);
 
-    @GET("/group/{name}/permissionCheck")
+    @GET("/group/{name}/permission-check")
     Call<PermissionCheckResult> permissionCheck(@Path("name") String name, @Query("permission") String permission);
 
-    @POST("/group/{name}/permissionCheck")
+    @POST("/group/{name}/permission-check")
     Call<PermissionCheckResult> permissionCheck(@Path("name") String name, @Body PermissionCheckRequest req);
 
 }

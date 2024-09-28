@@ -120,10 +120,10 @@ public interface UserService {
     @GET("/user/{uniqueId}/meta")
     Call<Metadata> metadata(@Path("uniqueId") UUID uniqueId);
 
-    @GET("/user/{uniqueId}/permissionCheck")
+    @GET("/user/{uniqueId}/permission-check")
     Call<PermissionCheckResult> permissionCheck(@Path("uniqueId") UUID uniqueId, @Query("permission") String permission);
 
-    @POST("/user/{uniqueId}/permissionCheck")
+    @POST("/user/{uniqueId}/permission-check")
     Call<PermissionCheckResult> permissionCheck(@Path("uniqueId") UUID uniqueId, @Body PermissionCheckRequest req);
 
     @POST("/user/{uniqueId}/promote")
