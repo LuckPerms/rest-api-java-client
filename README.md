@@ -25,7 +25,7 @@ compileOnly 'net.luckperms:rest-api-client:0.1'
 Then, create a new client and start making calls:
 
 ```java
-LuckPermsClient client = LuckPermsClient.builder()
+LuckPermsRestClient client = LuckPermsRestClient.builder()
         .baseUrl("http://localhost:8080")
         .apiKey("abc123")
         .build();
