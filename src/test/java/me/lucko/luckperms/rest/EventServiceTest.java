@@ -29,9 +29,14 @@ import net.luckperms.rest.LuckPermsRestClient;
 import net.luckperms.rest.event.EventCall;
 import net.luckperms.rest.event.EventProducer;
 import net.luckperms.rest.model.Action;
+import net.luckperms.rest.model.CustomMessage;
+import net.luckperms.rest.model.CustomMessageReceiveEvent;
 import net.luckperms.rest.model.LogBroadcastEvent;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
+import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,6 +46,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -70,6 +76,39 @@ public class EventServiceTest extends AbstractIntegrationTest {
         assertEquals(LogBroadcastEvent.Origin.LOCAL_API, event.origin());
         assertEquals(exampleAction, event.entry());
         assertNotSame(event.entry(), exampleAction);
+    }
+
+    @Test
+    public void testCustomMessageReceiveEvent() throws Exception {
+        try (Network network = Network.newNetwork(); GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis"))) {
+            redis.withNetwork(network).withNetworkAliases("redis").start();
+
+            Supplier<GenericContainer<?>> restSupplier = () -> createContainer()
+                    .withNetwork(network)
+                    .withEnv("LUCKPERMS_MESSAGING_SERVICE", "redis")
+                    .withEnv("LUCKPERMS_REDIS_ENABLED", "true")
+                    .withEnv("LUCKPERMS_REDIS_ADDRESS", "redis:6379");
+
+            try (GenericContainer<?> restA = restSupplier.get(); GenericContainer<?> restB = restSupplier.get()) {
+                restA.start();
+                restB.start();
+
+                LuckPermsRestClient clientA = createClient(restA);
+                LuckPermsRestClient clientB = createClient(restB);
+
+                EventCall<CustomMessageReceiveEvent> call = clientA.events().customMessageReceive();
+                CustomMessageReceiveEvent event = testEvent(call, 5, () -> {
+                    try {
+                        clientB.messaging().sendCustomMessage(new CustomMessage("custom:test", "aaabbbccc")).execute();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+                assertEquals("custom:test", event.channelId());
+                assertEquals("aaabbbccc", event.payload());
+            }
+        }
     }
 
     @Test

@@ -28,6 +28,7 @@ package net.luckperms.rest;
 import net.luckperms.rest.service.ActionService;
 import net.luckperms.rest.service.EventService;
 import net.luckperms.rest.service.GroupService;
+import net.luckperms.rest.service.MessagingService;
 import net.luckperms.rest.service.MiscService;
 import net.luckperms.rest.service.TrackService;
 import net.luckperms.rest.service.UserService;
@@ -50,6 +51,7 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
     private final GroupService groupService;
     private final TrackService trackService;
     private final ActionService actionService;
+    private final MessagingService messagingService;
     private final EventService eventService;
     private final MiscService miscService;
 
@@ -76,6 +78,7 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
         this.groupService = retrofit.create(GroupService.class);
         this.trackService = retrofit.create(TrackService.class);
         this.actionService = retrofit.create(ActionService.class);
+        this.messagingService = retrofit.create(MessagingService.class);
         this.eventService = retrofit.create(EventService.class);
         this.miscService = retrofit.create(MiscService.class);
     }
@@ -97,6 +100,11 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
     @Override
     public ActionService actions() {
         return this.actionService;
+    }
+
+    @Override
+    public MessagingService messaging() {
+        return this.messagingService;
     }
 
     @Override

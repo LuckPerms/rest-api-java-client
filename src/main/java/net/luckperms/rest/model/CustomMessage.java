@@ -23,35 +23,22 @@
  *  SOFTWARE.
  */
 
-package net.luckperms.rest.service;
+package net.luckperms.rest.model;
 
-import net.luckperms.rest.event.EventCall;
-import net.luckperms.rest.model.CustomMessageReceiveEvent;
-import net.luckperms.rest.model.LogBroadcastEvent;
-import net.luckperms.rest.model.PostNetworkSyncEvent;
-import net.luckperms.rest.model.PostSyncEvent;
-import net.luckperms.rest.model.PreNetworkSyncEvent;
-import net.luckperms.rest.model.PreSyncEvent;
-import retrofit2.http.GET;
+public class CustomMessage extends AbstractModel {
+    private final String channelId;
+    private final String payload;
 
-public interface EventService {
+    public CustomMessage(String channelId, String payload) {
+        this.channelId = channelId;
+        this.payload = payload;
+    }
 
-    @GET("/event/log-broadcast")
-    EventCall<LogBroadcastEvent> logBroadcast();
+    public String channelId() {
+        return this.channelId;
+    }
 
-    @GET("/event/post-network-sync")
-    EventCall<PostNetworkSyncEvent> postNetworkSync();
-
-    @GET("/event/post-sync")
-    EventCall<PostSyncEvent> postSync();
-
-    @GET("/event/pre-network-sync")
-    EventCall<PreNetworkSyncEvent> preNetworkSync();
-
-    @GET("/event/pre-sync")
-    EventCall<PreSyncEvent> preSync();
-
-    @GET("/event/custom-message-receive")
-    EventCall<CustomMessageReceiveEvent> customMessageReceive();
-
+    public String payload() {
+        return this.payload;
+    }
 }

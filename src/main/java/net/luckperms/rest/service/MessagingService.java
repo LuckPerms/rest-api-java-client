@@ -25,33 +25,23 @@
 
 package net.luckperms.rest.service;
 
-import net.luckperms.rest.event.EventCall;
-import net.luckperms.rest.model.CustomMessageReceiveEvent;
-import net.luckperms.rest.model.LogBroadcastEvent;
-import net.luckperms.rest.model.PostNetworkSyncEvent;
-import net.luckperms.rest.model.PostSyncEvent;
-import net.luckperms.rest.model.PreNetworkSyncEvent;
-import net.luckperms.rest.model.PreSyncEvent;
-import retrofit2.http.GET;
+import net.luckperms.rest.model.CustomMessage;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
 
-public interface EventService {
+import java.util.UUID;
 
-    @GET("/event/log-broadcast")
-    EventCall<LogBroadcastEvent> logBroadcast();
+public interface MessagingService {
 
-    @GET("/event/post-network-sync")
-    EventCall<PostNetworkSyncEvent> postNetworkSync();
+    @POST("/messaging/update")
+    Call<Void> pushUpdate();
 
-    @GET("/event/post-sync")
-    EventCall<PostSyncEvent> postSync();
+    @POST("/messaging/update/{uniqueId}")
+    Call<Void> pushUserUpdate(@Path("uniqueId") UUID uniqueId);
 
-    @GET("/event/pre-network-sync")
-    EventCall<PreNetworkSyncEvent> preNetworkSync();
-
-    @GET("/event/pre-sync")
-    EventCall<PreSyncEvent> preSync();
-
-    @GET("/event/custom-message-receive")
-    EventCall<CustomMessageReceiveEvent> customMessageReceive();
+    @POST("/messaging/custom")
+    Call<Void> sendCustomMessage(@Body CustomMessage message);
 
 }

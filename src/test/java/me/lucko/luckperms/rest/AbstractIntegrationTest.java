@@ -43,15 +43,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AbstractIntegrationTest {
 
     @Container
-    private static final GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse("ghcr.io/luckperms/rest-api"))
-            .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger(AbstractIntegrationTest.class)))
-            .withExposedPorts(8080)
-            .waitingFor(new WaitAllStrategy()
-                    .withStrategy(Wait.forListeningPort())
-                    .withStrategy(Wait.forLogMessage(".*Successfully enabled.*", 1))
-            );
+    private static final GenericContainer<?> container = createContainer();
 
     protected LuckPermsRestClient createClient() {
+        return createClient(container);
+    }
+
+    protected static GenericContainer<?> createContainer() {
+        return new GenericContainer<>(DockerImageName.parse("ghcr.io/luckperms/rest-api"))
+                .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger(AbstractIntegrationTest.class)))
+                .withExposedPorts(8080)
+                .waitingFor(new WaitAllStrategy()
+                        .withStrategy(Wait.forListeningPort())
+                        .withStrategy(Wait.forLogMessage(".*Successfully enabled.*", 1))
+                );
+    }
+
+    protected static LuckPermsRestClient createClient(GenericContainer<?> container) {
         assertTrue(container.isRunning());
 
         String host = container.getHost();
