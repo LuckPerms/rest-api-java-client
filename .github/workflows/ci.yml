@@ -31,7 +31,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Run build and tests with Gradle wrapper
-        run: ./gradlew test build
+        run: ./gradlew test build PdockerTests
 
       - name: Publish test report
         uses: mikepenz/action-junit-report@v3

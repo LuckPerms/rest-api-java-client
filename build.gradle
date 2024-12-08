@@ -11,9 +11,9 @@ version = '0.1-SNAPSHOT'
 
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
-    }
+    //toolchain {
+    //    languageVersion = JavaLanguageVersion.of(11)
+    //}
 
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
@@ -27,6 +27,7 @@ repositories {
 }
 
 test {
+    onlyIf { project.hasProperty('dockerTests') }
     useJUnitPlatform()
     testLogging {
         events = [TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED]
@@ -60,6 +61,15 @@ dependencies {
 }
 
 publishing {
+    //repositories {
+    //    maven {
+    //        url = 'https://oss.sonatype.org/content/repositories/snapshots'
+    //        credentials {
+    //            username = sonatypeUsername
+    //            password = sonatypePassword
+    //        }
+    //    }
+    //}
     publications {
         mavenJava(MavenPublication) {
             from components.java

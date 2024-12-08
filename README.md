@@ -11,15 +11,32 @@ Add a dependency to your Maven/Gradle buildscript:
 e.g.
 
 ```groovy
-compileOnly 'net.luckperms:rest-api-client:0.1'
+repositories {
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+
+dependencies {
+    implementation 'net.luckperms:rest-api-java-client:0.1-SNAPSHOT'
+}
 ```
 
 ```xml
-<dependency>
-    <groupId>net.luckperms</groupId>
-    <artifactId>rest-api-client</artifactId>
-    <version>0.1</version>
-</dependency>
+<repositories>
+    <repository>
+        <id>sonatype-snapshots</id>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>net.luckperms</groupId>
+        <artifactId>rest-api-java-client</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </dependency>
+</dependencies>
 ```
 
 Then, create a new client and start making calls:
