@@ -32,6 +32,9 @@ import net.luckperms.rest.service.MessagingService;
 import net.luckperms.rest.service.MiscService;
 import net.luckperms.rest.service.TrackService;
 import net.luckperms.rest.service.UserService;
+import okhttp3.OkHttpClient;
+
+import java.util.function.Consumer;
 
 /**
  * A Java client for the LuckPerms REST API.
@@ -124,6 +127,14 @@ public interface LuckPermsRestClient extends AutoCloseable {
          * @return this builder
          */
         Builder apiKey(String apiKey);
+
+        /**
+         * Sets a custom HTTP client configurer.
+         *
+         * @param clientConfigurer the client configurer
+         * @return this builder
+         */
+        Builder httpClientConfigurer(Consumer<OkHttpClient.Builder> clientConfigurer);
 
         /**
          * Builds a client.

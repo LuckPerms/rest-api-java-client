@@ -27,7 +27,7 @@ repositories {
 }
 
 test {
-    onlyIf { project.hasProperty('dockerTests') }
+    //onlyIf { project.hasProperty('dockerTests') }
     useJUnitPlatform()
     testLogging {
         events = [TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED]

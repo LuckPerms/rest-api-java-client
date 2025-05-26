@@ -42,6 +42,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 class LuckPermsRestClientImpl implements LuckPermsRestClient {
     private final OkHttpClient httpClient;
@@ -55,7 +56,7 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
     private final EventService eventService;
     private final MiscService miscService;
 
-    LuckPermsRestClientImpl(String baseUrl, String apiKey) {
+    LuckPermsRestClientImpl(String baseUrl, String apiKey, Consumer<OkHttpClient.Builder> clientConfigurer) {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
         if (apiKey != null && !apiKey.isEmpty()) {
@@ -63,6 +64,10 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
         }
 
         clientBuilder.readTimeout(60, TimeUnit.SECONDS);
+
+        if (clientConfigurer != null) {
+            clientConfigurer.accept(clientBuilder);
+        }
 
         this.httpClient = clientBuilder.build();
         this.eventCallAdapterFactory = new EventCallAdapterFactory(this.httpClient);
@@ -72,6 +77,7 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
                 .baseUrl(baseUrl)
                 .addCallAdapterFactory(this.eventCallAdapterFactory)
                 .addConverterFactory(GsonConverterFactory.create())
+                .validateEagerly(true)
                 .build();
 
         this.userService = retrofit.create(UserService.class);
@@ -127,6 +133,7 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
     static final class BuilderImpl implements Builder {
         private String baseUrl = null;
         private String apiKey = null;
+        private Consumer<OkHttpClient.Builder> clientConfigurer = null;
 
         BuilderImpl() {
 
@@ -145,9 +152,15 @@ class LuckPermsRestClientImpl implements LuckPermsRestClient {
         }
 
         @Override
+        public Builder httpClientConfigurer(Consumer<OkHttpClient.Builder> clientConfigurer) {
+            this.clientConfigurer = clientConfigurer;
+            return this;
+        }
+
+        @Override
         public LuckPermsRestClient build() {
             Objects.requireNonNull(this.baseUrl, "baseUrl must be configured!");
-            return new LuckPermsRestClientImpl(this.baseUrl, this.apiKey);
+            return new LuckPermsRestClientImpl(this.baseUrl, this.apiKey, this.clientConfigurer);
         }
     }
 
