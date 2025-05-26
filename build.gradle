@@ -7,14 +7,9 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 group = 'net.luckperms'
-version = '0.1-SNAPSHOT'
-
+version = '0.2-SNAPSHOT'
 
 java {
-    //toolchain {
-    //    languageVersion = JavaLanguageVersion.of(11)
-    //}
-
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
 
@@ -22,12 +17,21 @@ java {
     withSourcesJar()
 }
 
+javadoc {
+    options.encoding = 'UTF-8'
+    options.links(
+            'https://docs.oracle.com/en/java/javase/21/docs/api/',
+            'https://javadoc.io/static/com.squareup.retrofit2/retrofit/2.8.1/',
+            'https://javadoc.io/static/com.squareup.okhttp3/okhttp/3.14.9/',
+    )
+}
+
 repositories {
     mavenCentral()
 }
 
 test {
-    //onlyIf { project.hasProperty('dockerTests') }
+    onlyIf { project.hasProperty('dockerTests') }
     useJUnitPlatform()
     testLogging {
         events = [TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED]
@@ -60,20 +64,66 @@ dependencies {
     testImplementation 'com.google.guava:guava:32.1.3-jre'
 }
 
-publishing {
-    //repositories {
-    //    maven {
-    //        url = 'https://oss.sonatype.org/content/repositories/snapshots'
-    //        credentials {
-    //            username = sonatypeUsername
-    //            password = sonatypePassword
-    //        }
-    //    }
-    //}
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+if (project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')) {
+    apply plugin: 'signing'
+
+    publishing {
+        repositories {
+            maven {
+                def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+                credentials {
+                    username sonatypeUsername
+                    password sonatypePassword
+                }
+            }
+        }
+
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+
+                pom {
+                    name = 'LuckPerms Rest API Java Client'
+                    description = 'A Java client for the LuckPerms REST API.'
+                    url = 'https://luckperms.net'
+
+                    licenses {
+                        license {
+                            name = 'MIT'
+                            url = 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'lucko'
+                            name = 'Luck'
+                            url = 'https://lucko.me'
+                            email = 'git@lucko.me'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git:https://github.com/LuckPerms/rest-api-java-client.git'
+                        developerConnection = 'scm:git:git@github.com:LuckPerms/rest-api-java-client.git'
+                        url = 'https://github.com/LuckPerms/rest-api-java-client'
+                    }
+
+                    issueManagement {
+                        system = 'GitHub'
+                        url = 'https://github.com/LuckPerms/rest-api-java-client/issues'
+                    }
+                }
+            }
         }
     }
-}
 
+    signing {
+        useGpgCmd()
+        sign publishing.publications.mavenJava
+        required = true
+    }
+}
